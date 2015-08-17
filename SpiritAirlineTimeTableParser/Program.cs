@@ -24,6 +24,8 @@ namespace SpiritAirlineTimeTableParser
             // https://www.spirit.com/content/documents/en-us/timetable06AUG2015.pdf
 
             // Downlaoding latest pdf from skyteam website
+            string myDirpath = AppDomain.CurrentDomain.BaseDirectory + "\\data";
+            Directory.CreateDirectory(myDirpath);
             string path = AppDomain.CurrentDomain.BaseDirectory + "data\\Spirit_Timetable.pdf";
             Uri url = new Uri("https://www.spirit.com/content/documents/en-us/timetable06AUG2015.pdf");
             const string ua = "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; WOW64; Trident/5.0)";
@@ -113,11 +115,12 @@ namespace SpiritAirlineTimeTableParser
 
                 MatchCollection matches = rgxdate2.Matches(fpcurrentText);
 
-                string validfrom = matches[0].Value;
-                string validto = matches[1].Value;
-
-                DateTime ValidFrom = DateTime.ParseExact(validfrom, "dd MMM yyyy", ci);
-                DateTime ValidTo = DateTime.ParseExact(validto, "dd MMM yyyy", ci);
+                //string validfrom = matches[0].Value;
+                //string validto = matches[1].Value;
+                DateTime ValidFrom = new DateTime(2015, 8, 6);
+                DateTime ValidTo = new DateTime(2015, 11, 11);
+                //DateTime ValidFrom = DateTime.ParseExact(validfrom, "dd MMM yyyy", ci);
+                //DateTime ValidTo = DateTime.ParseExact(validto, "dd MMM yyyy", ci);
                 // Loop through each page of the document
                 for (var page = 2; page <= pdfReader.NumberOfPages; page++)
                 {
