@@ -59,9 +59,9 @@ namespace SpiritAirlineTimeTableParser
 
             //rectangles.Add(new Rectangle(x+(j*offset), (y+i*offset), offset, offset));
             float distanceInPixelsFromLeft = 0;
-            float distanceInPixelsFromBottom = 0;
-            float width = 306;//pdfReader.GetPageSize(page).Width / 2;
-            float height = 792; // pdfReader.GetPageSize(page).Height;
+            float distanceInPixelsFromBottom = 92;
+            float width = 275;//pdfReader.GetPageSize(page).Width / 2;
+            float height = 700; // pdfReader.GetPageSize(page).Height;
             // Format Paper
             // Letter		 612x792
             // A4		     595x842
@@ -122,7 +122,7 @@ namespace SpiritAirlineTimeTableParser
                 //DateTime ValidFrom = DateTime.ParseExact(validfrom, "dd MMM yyyy", ci);
                 //DateTime ValidTo = DateTime.ParseExact(validto, "dd MMM yyyy", ci);
                 // Loop through each page of the document
-                for (var page = 2; page <= pdfReader.NumberOfPages; page++)
+                for (var page = 3; page <= pdfReader.NumberOfPages; page++)
                 {
 
                     Console.WriteLine("Parsing page {0}...", page);
