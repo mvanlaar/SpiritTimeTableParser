@@ -171,8 +171,7 @@ namespace SpiritAirlineTimeTableParser
                         TimeSpan TEMP_DurationTime = TimeSpan.MinValue;
                         Boolean TEMP_FlightNextDayArrival = false;
                         int TEMP_FlightNextDays = 0;
-                        Boolean TEMP_FlightDirect = true;
-                        Boolean TEMP_FlightNumberSet = false;
+                        Boolean TEMP_FlightDirect = true;                        
 
                         foreach (string line in lines)
                         {
@@ -323,8 +322,7 @@ namespace SpiritAirlineTimeTableParser
                                             if (temp_string.Contains("*"))
                                             {
                                                 TEMP_FlightCodeShare = true;
-                                                TEMP_FlightNumber = TEMP_FlightNumber.Replace("*", "");
-                                                TEMP_FlightNumberSet = true;
+                                                TEMP_FlightNumber = TEMP_FlightNumber.Replace("*", "");                                               
                                             }
                                         }
                                     }
@@ -345,20 +343,43 @@ namespace SpiritAirlineTimeTableParser
                                         }
                                         else
                                         {
-                                            foreach (Match ItemMatch in rgxFlightDay.Matches(temp_string))
+                                            if (temp_string.StartsWith("X"))
                                             {
-                                                int.TryParse(ItemMatch.Value, out TEMP_Conversie);
-                                                if (TEMP_Conversie == 1) { TEMP_FlightMonday = true; }
-                                                if (TEMP_Conversie == 2) { TEMP_FlightTuesday = true; }
-                                                if (TEMP_Conversie == 3) { TEMP_FlightWednesday = true; }
-                                                if (TEMP_Conversie == 4) { TEMP_FlightThursday = true; }
-                                                if (TEMP_Conversie == 5) { TEMP_FlightFriday = true; }
-                                                if (TEMP_Conversie == 6) { TEMP_FlightSaterday = true; }
-                                                if (TEMP_Conversie == 7) { TEMP_FlightSunday = true; }
+                                                // Alle days exept.
+                                                TEMP_FlightSunday = true;
+                                                TEMP_FlightMonday = true;
+                                                TEMP_FlightTuesday = true;
+                                                TEMP_FlightWednesday = true;
+                                                TEMP_FlightThursday = true;
+                                                TEMP_FlightFriday = true;
+                                                TEMP_FlightSaterday = true;
+                                                foreach (Match ItemMatch in rgxFlightDay.Matches(temp_string))
+                                                {
+                                                    int.TryParse(ItemMatch.Value, out TEMP_Conversie);
+                                                    if (TEMP_Conversie == 1) { TEMP_FlightMonday = false; }
+                                                    if (TEMP_Conversie == 2) { TEMP_FlightTuesday = false; }
+                                                    if (TEMP_Conversie == 3) { TEMP_FlightWednesday = false; }
+                                                    if (TEMP_Conversie == 4) { TEMP_FlightThursday = false; }
+                                                    if (TEMP_Conversie == 5) { TEMP_FlightFriday = false; }
+                                                    if (TEMP_Conversie == 6) { TEMP_FlightSaterday = false; }
+                                                    if (TEMP_Conversie == 7) { TEMP_FlightSunday = false; }
+                                                }
+                                            }
+                                            else { 
+                                                foreach (Match ItemMatch in rgxFlightDay.Matches(temp_string))
+                                                {
+                                                    int.TryParse(ItemMatch.Value, out TEMP_Conversie);
+                                                    if (TEMP_Conversie == 1) { TEMP_FlightMonday = true; }
+                                                    if (TEMP_Conversie == 2) { TEMP_FlightTuesday = true; }
+                                                    if (TEMP_Conversie == 3) { TEMP_FlightWednesday = true; }
+                                                    if (TEMP_Conversie == 4) { TEMP_FlightThursday = true; }
+                                                    if (TEMP_Conversie == 5) { TEMP_FlightFriday = true; }
+                                                    if (TEMP_Conversie == 6) { TEMP_FlightSaterday = true; }
+                                                    if (TEMP_Conversie == 7) { TEMP_FlightSunday = true; }
+                                                }
                                             }
                                         }
-                                    }
-                                    TEMP_FlightNumberSet = false;
+                                    }                                    
                                     //// Aircraft parsing
 
                                     //if (temp_string.Length == 3)
