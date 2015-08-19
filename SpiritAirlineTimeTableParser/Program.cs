@@ -184,7 +184,7 @@ namespace SpiritAirlineTimeTableParser
                                     // From and To
                                     if (rgxIATAAirport.Matches(temp_string).Count > 0)
                                     {
-                                        if (String.IsNullOrEmpty(TEMP_FromIATA) && temp_string.Contains("FROM"))
+                                        if (temp_string.Contains("FROM"))
                                         {
                                             string airport = rgxIATAAirport.Match(temp_string).Groups[0].Value;
                                             airport = airport.Replace("[", "");
@@ -193,12 +193,12 @@ namespace SpiritAirlineTimeTableParser
                                         }
                                         else
                                         {
-                                            if (String.IsNullOrEmpty(TEMP_ToIATA) && !String.IsNullOrEmpty(TEMP_FromIATA) && temp_string.Contains("TO"))
+                                            if (temp_string.Contains("TO"))
                                             {
                                                 string airport = rgxIATAAirport.Match(temp_string).Groups[0].Value;
                                                 airport = airport.Replace("[", "");
                                                 airport = airport.Replace("]", "");
-                                                TEMP_ToIATA = airport;                                                
+                                                TEMP_ToIATA = airport;
                                             }
                                         }
                                     }
@@ -227,20 +227,25 @@ namespace SpiritAirlineTimeTableParser
                                     // Depart and arrival times
                                     if (rgxtime.Matches(temp_string).Count > 0)
                                     {
-                                        if (rgxtime.Matches(temp_string).Count == 2)
-                                        {
+                                        //if (rgxtime.Matches(temp_string).Count == 2)
+                                        //{
                                             // Contains to and from date.
                                             foreach (Match ItemMatch in rgxtime.Matches(temp_string))
                                             {
                                                 if (TEMP_DepartTime == DateTime.MinValue)
                                                 {
-                                                    // Time Parsing                                             
-                                                    DateTime.TryParse(ItemMatch.Value, out TEMP_DepartTime);
+                                                    // Time Parsing 
+                                                    string y = ItemMatch.Value;
+                                                    y = y.ToUpper();
+                                                    y = y.Trim();
+                                                    TEMP_DepartTime = DateTime.ParseExact(y, "h:mmt", ci);
                                                 }
                                                 else
                                                 {
                                                     // There is a from value so this is to.
                                                     string x = ItemMatch.Value;
+                                                    x = x.ToUpper();
+                                                    x = x.Trim();
                                                     if (x.Contains("+1"))
                                                     {
                                                         // Next day arrival
@@ -262,45 +267,48 @@ namespace SpiritAirlineTimeTableParser
                                                         TEMP_FlightNextDays = -1;
                                                         TEMP_FlightNextDayArrival = true;
                                                     }
-                                                    DateTime.TryParse(x.Trim(), out TEMP_ArrivalTime);
+                                                    //DateTime.TryParse(x.Trim(), out TEMP_ArrivalTime);
+                                                    TEMP_ArrivalTime = DateTime.ParseExact(x, "h:mmt", ci);
                                                 }
                                             }
-                                        }
-                                        else
-                                        {
-                                            if (TEMP_DepartTime == DateTime.MinValue)
-                                            {
-                                                // Time Parsing                                             
-                                                DateTime.TryParse(temp_string.Trim(), out TEMP_DepartTime);
-                                            }
-                                            else
-                                            {
-                                                // There is a from value so this is to.
-                                                string x = temp_string;
-                                                if (x.Contains("+1"))
-                                                {
-                                                    // Next day arrival
-                                                    x = x.Replace("+1", "");
-                                                    TEMP_FlightNextDays = 1;
-                                                    TEMP_FlightNextDayArrival = true;
-                                                }
-                                                if (x.Contains("+2"))
-                                                {
-                                                    // Next day arrival
-                                                    x = x.Replace("+2", "");
-                                                    TEMP_FlightNextDays = 2;
-                                                    TEMP_FlightNextDayArrival = true;
-                                                }
-                                                if (x.Contains("+-1"))
-                                                {
-                                                    // Next day arrival
-                                                    x = x.Replace("+-1", "");
-                                                    TEMP_FlightNextDays = -1;
-                                                    TEMP_FlightNextDayArrival = true;
-                                                }
-                                                DateTime.TryParse(x.Trim(), out TEMP_ArrivalTime);
-                                            }
-                                        }
+                                        //}
+                                        //else
+                                        //{
+                                        //    if (TEMP_DepartTime == DateTime.MinValue)
+                                        //    {
+                                        //        temp_string = temp_string.ToUpper();                                                
+                                        //        TEMP_DepartTime = DateTime.ParseExact(temp_string.Trim(), "h:mmt", ci);
+                                        //    }
+                                        //    else
+                                        //    {
+                                        //        // There is a from value so this is to.
+                                        //        string x = temp_string;
+                                        //        if (x.Contains("+1"))
+                                        //        {
+                                        //            // Next day arrival
+                                        //            x = x.Replace("+1", "");
+                                        //            TEMP_FlightNextDays = 1;
+                                        //            TEMP_FlightNextDayArrival = true;
+                                        //        }
+                                        //        if (x.Contains("+2"))
+                                        //        {
+                                        //            // Next day arrival
+                                        //            x = x.Replace("+2", "");
+                                        //            TEMP_FlightNextDays = 2;
+                                        //            TEMP_FlightNextDayArrival = true;
+                                        //        }
+                                        //        if (x.Contains("+-1"))
+                                        //        {
+                                        //            // Next day arrival
+                                        //            x = x.Replace("+-1", "");
+                                        //            TEMP_FlightNextDays = -1;
+                                        //            TEMP_FlightNextDayArrival = true;
+                                        //        }
+                                        //        x = x.ToUpper();
+                                        //        x = x.Trim();
+                                        //        TEMP_ArrivalTime = DateTime.ParseExact(x, "h:mmt", ci);
+                                        //    }
+                                        //}
                                     }
                                     // FlightNumber Parsing
                                     if (rgxFlightNumber.IsMatch(temp_string) && TEMP_ArrivalTime != DateTime.MinValue)
@@ -335,7 +343,7 @@ namespace SpiritAirlineTimeTableParser
                                         {
                                             foreach (Match ItemMatch in rgxFlightDay.Matches(temp_string))
                                             {
-                                                int.TryParse(c.ToString(), out TEMP_Conversie);
+                                                int.TryParse(ItemMatch.Value, out TEMP_Conversie);
                                                 if (TEMP_Conversie == 1) { TEMP_FlightSunday = true; }
                                                 if (TEMP_Conversie == 2) { TEMP_FlightMonday = true; }
                                                 if (TEMP_Conversie == 3) { TEMP_FlightTuesday = true; }
@@ -376,23 +384,7 @@ namespace SpiritAirlineTimeTableParser
                                                 TEMP_FlightDirect = false;
                                             }
                                         }
-                                    }
-
-                                    if (TEMP_Aircraftcode != null && rgxFlightTime.Matches(temp_string).Count > 0)
-                                    {
-                                        // Aircraft code has been found so this has to be the flighttimes. and so the last value of the string...
-                                        int intFlightTimeH = 0;
-                                        int intFlightTimeM = 0;
-                                        var match = rgxFlightTime.Match(temp_string);
-                                        intFlightTimeH = int.Parse(match.Groups[1].Value);
-                                        intFlightTimeM = int.Parse(match.Groups[2].Value);
-                                        TEMP_DurationTime = new TimeSpan(0, intFlightTimeH, intFlightTimeM, 0);
-                                        //int rgxFlightTimeH = rgxFlightTime.Match(temp_string).Groups[0].Value
-                                        //TEMP_DurationTime = DateTime.ParseExact(temp_string, "HH\H mm \M", null);
-                                        string TEMP_Airline = null;
-                                        if (TEMP_Aircraftcode == "BUS") { TEMP_Airline = null; }
-                                        else { TEMP_Airline = TEMP_FlightNumber.Substring(0, 2); }
-
+                                        // Last Column
                                         CIFLights.Add(new CIFLight
                                         {
                                             FromIATA = TEMP_FromIATA,
@@ -401,7 +393,7 @@ namespace SpiritAirlineTimeTableParser
                                             ToDate = TEMP_ValidTo,
                                             ArrivalTime = TEMP_ArrivalTime,
                                             DepartTime = TEMP_DepartTime,
-                                            FlightAircraft = TEMP_Aircraftcode,
+                                            FlightAircraft = @"Airbus A319/A320",
                                             FlightAirline = @"NK",
                                             FlightMonday = TEMP_FlightMonday,
                                             FlightTuesday = TEMP_FlightTuesday,
@@ -439,38 +431,73 @@ namespace SpiritAirlineTimeTableParser
                                         TEMP_FlightNextDays = 0;
                                         TEMP_FlightDirect = true;
                                     }
-                                    if (temp_string.Contains("Operated by: "))
-                                    {
-                                        // Ok, this has to be added to the last record.
-                                        CIFLights[CIFLights.Count - 1].FlightOperator = temp_string.Replace("Operated by: ", "").Trim();
-                                        CIFLights[CIFLights.Count - 1].FlightCodeShare = true;
-                                    }
-                                    if (temp_string.Equals("Consult your travel agent for details"))
-                                    {
-                                        TEMP_ToIATA = null;
-                                        TEMP_FromIATA = null;
-                                        TEMP_ValidFrom = new DateTime();
-                                        TEMP_ValidTo = new DateTime();
-                                        TEMP_Conversie = 0;
-                                        TEMP_FlightMonday = false;
-                                        TEMP_FlightTuesday = false;
-                                        TEMP_FlightWednesday = false;
-                                        TEMP_FlightThursday = false;
-                                        TEMP_FlightFriday = false;
-                                        TEMP_FlightSaterday = false;
-                                        TEMP_FlightSunday = false;
-                                        TEMP_DepartTime = new DateTime();
-                                        TEMP_ArrivalTime = new DateTime();
-                                        TEMP_FlightNumber = null;
-                                        TEMP_Aircraftcode = null;
-                                        TEMP_DurationTime = TimeSpan.MinValue;
-                                        TEMP_FlightCodeShare = false;
-                                        TEMP_FlightNextDayArrival = false;
-                                        TEMP_FlightNextDays = 0;
-                                        TEMP_FlightDirect = true;
+                                         
+                                    //if (TEMP_Aircraftcode != null && rgxFlightTime.Matches(temp_string).Count > 0)
+                                    //{
+                                    //    // Aircraft code has been found so this has to be the flighttimes. and so the last value of the string...
+                                    //    int intFlightTimeH = 0;
+                                    //    int intFlightTimeM = 0;
+                                    //    var match = rgxFlightTime.Match(temp_string);
+                                    //    intFlightTimeH = int.Parse(match.Groups[1].Value);
+                                    //    intFlightTimeM = int.Parse(match.Groups[2].Value);
+                                    //    TEMP_DurationTime = new TimeSpan(0, intFlightTimeH, intFlightTimeM, 0);
+                                    //    //int rgxFlightTimeH = rgxFlightTime.Match(temp_string).Groups[0].Value
+                                    //    //TEMP_DurationTime = DateTime.ParseExact(temp_string, "HH\H mm \M", null);
+                                    //    string TEMP_Airline = null;
+                                    //    if (TEMP_Aircraftcode == "BUS") { TEMP_Airline = null; }
+                                    //    else { TEMP_Airline = TEMP_FlightNumber.Substring(0, 2); }
+
                                         
+                                    //}
+                                    if (temp_string.Contains("EFF ") || temp_string.Contains("DIS "))
+                                    {
+                                        // custom from and to dates
+                                        if (temp_string.Contains("EFF "))
+                                        {
+                                            temp_string = temp_string.Replace("EFF ", "");
+                                            //TEMP_ValidFrom = DateTime.ParseExact(temp_string.Trim(), "MM/dd/YY", ci);
+                                            CIFLights[CIFLights.Count - 1].FromDate = DateTime.ParseExact(temp_string.Trim(), "MM/dd/yy", ci);
+                                            
+                                        }
+
+                                        if (temp_string.Contains("DIS "))
+                                        {
+                                            temp_string = temp_string.Replace("DIS ", "");
+                                            CIFLights[CIFLights.Count - 1].ToDate = DateTime.ParseExact(temp_string.Trim(), "MM/dd/yy", ci);
+                                        }
                                     }
-                                    //Console.WriteLine(value);
+                                    //if (temp_string.Contains("Operated by: "))
+                                    //{
+                                    //    // Ok, this has to be added to the last record.
+                                    //    CIFLights[CIFLights.Count - 1].FlightOperator = temp_string.Replace("Operated by: ", "").Trim();
+                                    //    CIFLights[CIFLights.Count - 1].FlightCodeShare = true;
+                                    //}
+                                    //if (temp_string.Equals("Consult your travel agent for details"))
+                                    //{
+                                    //    TEMP_ToIATA = null;
+                                    //    TEMP_FromIATA = null;
+                                    //    TEMP_ValidFrom = new DateTime();
+                                    //    TEMP_ValidTo = new DateTime();
+                                    //    TEMP_Conversie = 0;
+                                    //    TEMP_FlightMonday = false;
+                                    //    TEMP_FlightTuesday = false;
+                                    //    TEMP_FlightWednesday = false;
+                                    //    TEMP_FlightThursday = false;
+                                    //    TEMP_FlightFriday = false;
+                                    //    TEMP_FlightSaterday = false;
+                                    //    TEMP_FlightSunday = false;
+                                    //    TEMP_DepartTime = new DateTime();
+                                    //    TEMP_ArrivalTime = new DateTime();
+                                    //    TEMP_FlightNumber = null;
+                                    //    TEMP_Aircraftcode = null;
+                                    //    TEMP_DurationTime = TimeSpan.MinValue;
+                                    //    TEMP_FlightCodeShare = false;
+                                    //    TEMP_FlightNextDayArrival = false;
+                                    //    TEMP_FlightNextDays = 0;
+                                    //    TEMP_FlightDirect = true;
+                                        
+                                    //}
+                                    Console.WriteLine(value);
                                 }
                             }
                         }
