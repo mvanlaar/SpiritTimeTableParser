@@ -172,6 +172,7 @@ namespace SpiritAirlineTimeTableParser
                         Boolean TEMP_FlightNextDayArrival = false;
                         int TEMP_FlightNextDays = 0;
                         Boolean TEMP_FlightDirect = true;
+                        Boolean TEMP_FlightNumberSet = false;
 
                         foreach (string line in lines)
                         {
@@ -323,11 +324,12 @@ namespace SpiritAirlineTimeTableParser
                                             {
                                                 TEMP_FlightCodeShare = true;
                                                 TEMP_FlightNumber = TEMP_FlightNumber.Replace("*", "");
+                                                TEMP_FlightNumberSet = true;
                                             }
                                         }
                                     }
                                     // Parsing flightdays
-                                    if ((rgxFlightDay.Matches(temp_string).Count > 0 || temp_string.Contains("Daily")) && TEMP_FlightNumber != null)
+                                    if ((rgxFlightDay.Matches(temp_string).Count > 0 || temp_string.Contains("Daily")) && TEMP_FlightNumber != null && TEMP_FlightNumber != temp_string)
                                     {
                                         // Flight days found!
                                         if (temp_string.Contains("Daily"))
@@ -355,8 +357,8 @@ namespace SpiritAirlineTimeTableParser
                                                 if (TEMP_Conversie == 7) { TEMP_FlightSunday = true; }
                                             }
                                         }
-                                    }                                    
-                                    
+                                    }
+                                    TEMP_FlightNumberSet = false;
                                     //// Aircraft parsing
 
                                     //if (temp_string.Length == 3)
@@ -431,6 +433,7 @@ namespace SpiritAirlineTimeTableParser
                                         TEMP_FlightNextDayArrival = false;
                                         TEMP_FlightNextDays = 0;
                                         TEMP_FlightDirect = true;
+                                        
                                     }
                                          
                                     //if (TEMP_Aircraftcode != null && rgxFlightTime.Matches(temp_string).Count > 0)
