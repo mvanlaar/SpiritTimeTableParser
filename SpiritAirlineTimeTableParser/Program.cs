@@ -123,7 +123,7 @@ namespace SpiritAirlineTimeTableParser
                 //DateTime ValidFrom = DateTime.ParseExact(validfrom, "dd MMM yyyy", ci);
                 //DateTime ValidTo = DateTime.ParseExact(validto, "dd MMM yyyy", ci);
                 // Loop through each page of the document
-                for (var page = 3; page <= pdfReader.NumberOfPages; page++)
+                for (var page = 2; page <= pdfReader.NumberOfPages; page++)
                 {
 
                     Console.WriteLine("Parsing page {0}...", page);
@@ -313,7 +313,7 @@ namespace SpiritAirlineTimeTableParser
                                         //}
                                     }
                                     // FlightNumber Parsing
-                                    if (rgxFlightNumber.IsMatch(temp_string) && TEMP_ArrivalTime != DateTime.MinValue)
+                                    if (rgxFlightNumber.IsMatch(temp_string) && TEMP_ArrivalTime != DateTime.MinValue && TEMP_FlightMonday == false && TEMP_FlightTuesday == false && TEMP_FlightWednesday == false && TEMP_FlightThursday == false && TEMP_FlightFriday == false && TEMP_FlightSaterday == false && TEMP_FlightSunday == false)
                                     {
                                         // Extra check for SU9 flight number and Aircraft Type
                                         if (TEMP_FlightNumber == null)
@@ -346,14 +346,13 @@ namespace SpiritAirlineTimeTableParser
                                             foreach (Match ItemMatch in rgxFlightDay.Matches(temp_string))
                                             {
                                                 int.TryParse(ItemMatch.Value, out TEMP_Conversie);
-                                                if (TEMP_Conversie == 1) { TEMP_FlightSunday = true; }
-                                                if (TEMP_Conversie == 2) { TEMP_FlightMonday = true; }
-                                                if (TEMP_Conversie == 3) { TEMP_FlightTuesday = true; }
-                                                if (TEMP_Conversie == 4) { TEMP_FlightWednesday = true; }
-                                                if (TEMP_Conversie == 5) { TEMP_FlightThursday = true; }
-                                                if (TEMP_Conversie == 6) { TEMP_FlightFriday = true; }
-                                                if (TEMP_Conversie == 7) { TEMP_FlightSaterday = true; }
-
+                                                if (TEMP_Conversie == 1) { TEMP_FlightMonday = true; }
+                                                if (TEMP_Conversie == 2) { TEMP_FlightTuesday = true; }
+                                                if (TEMP_Conversie == 3) { TEMP_FlightWednesday = true; }
+                                                if (TEMP_Conversie == 4) { TEMP_FlightThursday = true; }
+                                                if (TEMP_Conversie == 5) { TEMP_FlightFriday = true; }
+                                                if (TEMP_Conversie == 6) { TEMP_FlightSaterday = true; }
+                                                if (TEMP_Conversie == 7) { TEMP_FlightSunday = true; }
                                             }
                                         }
                                     }                                    
