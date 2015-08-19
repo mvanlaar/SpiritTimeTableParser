@@ -50,7 +50,7 @@ namespace SpiritAirlineTimeTableParser
             Regex rgxFlightNumber = new Regex(@"(\d{3,4})");
             Regex rgxIATAAirport = new Regex(@"\[[A-Z]{3}\]");
             Regex rgxdate1 = new Regex(@"(([0-9])|([0-2][0-9])|([3][0-1])) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)");
-            Regex rgxdate2 = new Regex(@"(([0-9])|([0-2][0-9])|([3][0-1])) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) ([0-9]{4})");
+            Regex rgxdate2 = new Regex(@"Effective (?:(((Jan(uary)?|Ma(r(ch)?|y)|Jul(y)?|Aug(ust)?|Oct(ober)?|Dec(ember)?)\ 31)|((Jan(uary)?|Ma(r(ch)?|y)|Apr(il)?|Ju((ly?)|(ne?))|Aug(ust)?|Oct(ober)?|(Sept|Nov|Dec)(ember)?)\ (0?[1-9]|([12]\d)|30))|(Feb(ruary)?\ (0?[1-9]|1\d|2[0-8]|(29(?=,\ ((1[6-9]|[2-9]\d)(0[48]|[2468][048]|[13579][26])|((16|[2468][048]|[3579][26])00)))))))\,\ ((1[6-9]|[2-9]\d)\d{2}))");
             Regex rgxFlightDay = new Regex(@"[1234567]");
             Regex rgxFlightTime = new Regex(@"^([0-9]|0[0-9]|1[0-9]|2[0-3])H([0-9]|0[0-9]|1[0-9]|2[0-9]|3[0-9]|4[0-9]|5[0-9])M$");
             List<CIFLight> CIFLights = new List<CIFLight> { };
@@ -114,10 +114,12 @@ namespace SpiritAirlineTimeTableParser
 
                 MatchCollection matches = rgxdate2.Matches(fpcurrentText);
 
-                //string validfrom = matches[0].Value;
+                string validfrom = matches[0].Value;
+                validfrom = validfrom.Replace("Effective ", "");
                 //string validto = matches[1].Value;
-                DateTime ValidFrom = new DateTime(2015, 8, 6);
-                DateTime ValidTo = new DateTime(2015, 11, 11);
+                DateTime ValidFrom = DateTime.ParseExact(validfrom, "MMMM d, yyyy", ci);
+                //DateTime ValidFrom = new DateTime(2015, 8, 6);
+                //DateTime ValidTo = new DateTime(2015, 11, 11);
                 //DateTime ValidFrom = DateTime.ParseExact(validfrom, "dd MMM yyyy", ci);
                 //DateTime ValidTo = DateTime.ParseExact(validto, "dd MMM yyyy", ci);
                 // Loop through each page of the document
@@ -151,7 +153,7 @@ namespace SpiritAirlineTimeTableParser
                         string[] lines = Regex.Split(currentText, "\r\n");
                         string TEMP_FromIATA = null;
                         string TEMP_ToIATA = null;
-                        DateTime TEMP_ValidFrom = new DateTime();
+                        DateTime TEMP_ValidFrom = ValidFrom;
                         DateTime TEMP_ValidTo = new DateTime();
                         int TEMP_Conversie = 0;
                         Boolean TEMP_FlightMonday = false;
@@ -411,7 +413,7 @@ namespace SpiritAirlineTimeTableParser
                                             FlightDirect = TEMP_FlightDirect
                                         });
                                         // Cleaning All but From and To 
-                                        TEMP_ValidFrom = new DateTime();
+                                        TEMP_ValidFrom = ValidFrom;
                                         TEMP_ValidTo = new DateTime();
                                         TEMP_Conversie = 0;
                                         TEMP_FlightMonday = false;
@@ -464,6 +466,7 @@ namespace SpiritAirlineTimeTableParser
                                         {
                                             temp_string = temp_string.Replace("DIS ", "");
                                             CIFLights[CIFLights.Count - 1].ToDate = DateTime.ParseExact(temp_string.Trim(), "MM/dd/yy", ci);
+                                            CIFLights[CIFLights.Count - 1].FromDate = ValidFrom;
                                         }
                                     }
                                     //if (temp_string.Contains("Operated by: "))
