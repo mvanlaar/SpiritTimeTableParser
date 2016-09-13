@@ -44,7 +44,7 @@ namespace SpiritAirlineTimeTableParser
             string myDirpath = AppDomain.CurrentDomain.BaseDirectory + "\\data";
             Directory.CreateDirectory(myDirpath);
             string path = AppDomain.CurrentDomain.BaseDirectory + "data\\Spirit_Timetable.pdf";
-            Uri url = new Uri("https://www.spirit.com/content/documents/en-us/timetable01JUL2016.pdf");
+            Uri url = new Uri("https://www.spirit.com/content/documents/en-us/timetable08SEP2016.pdf");
             const string ua = "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; WOW64; Trident/5.0)";
             const string referer = "https://www.spirit.com/RouteMaps.aspx";
             if (File.Exists(path))
